@@ -49,6 +49,10 @@ function App() {
     setHpState([...hpState, { weaponId, weaponTicks, dmg, spec }]);
   };
 
+  const handleRemoveStep = (i: number) => {
+    setHpState([...hpState.slice(0, i), ...hpState.slice(i + 1)]);
+  };
+
   return (
     <>
       <h1 id="title">core down simulator</h1>
@@ -100,7 +104,11 @@ function App() {
           stats={stats}
         />
       </div>
-      <CoreHpCalculator maxHp={6750} hpState={hpState} />
+      <CoreHpCalculator
+        maxHp={6750}
+        hpState={hpState}
+        onRemoveStep={handleRemoveStep}
+      />
     </>
   );
 }

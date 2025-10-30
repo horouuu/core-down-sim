@@ -7,6 +7,8 @@ type HpBarProps = {
   current: number;
   max: number;
   stateData: { weaponId: number; dmg: number };
+  onRemoveStep: (i: number) => void;
+  idx: number;
 };
 
 function getCoreTime(coreState: number) {
@@ -33,7 +35,11 @@ function getCoreState(hpPct: number) {
   }
 }
 
-function processStates(hpState: HpStateStack, maxHp: number) {
+const processStates = (
+  hpState: HpStateStack,
+  maxHp: number,
+  onRemoveStep: (i: number) => void
+) => {
   const reduced = hpState.reduce<[number, number][]>((acc, stateData) => {
     const last = acc.at(-1) ?? [maxHp, 1, 0, 1];
     const currHp = last[0] - stateData.dmg * 5;
@@ -47,7 +53,10 @@ function processStates(hpState: HpStateStack, maxHp: number) {
   const final = reduced.flatMap((step, i) => {
     const comp = (
       <HpBar
+        key={i}
+        idx={i}
         current={step[0]}
+        onRemoveStep={onRemoveStep}
         max={maxHp}
         stateData={{
           dmg: hpState[i].dmg,
@@ -71,9 +80,9 @@ function processStates(hpState: HpStateStack, maxHp: number) {
   });
 
   return final;
-}
+};
 
-function HpBar({ current, max, stateData }: HpBarProps) {
+function HpBar({ current, max, stateData, onRemoveStep, idx }: HpBarProps) {
   const { weaponId, dmg } = stateData;
   const percentage = Math.max(0, Math.min(1, current / max || 0));
   const pText = `${Math.floor(percentage * 100)}%`;
@@ -82,6 +91,7 @@ function HpBar({ current, max, stateData }: HpBarProps) {
     <div className={styles.barContainer}>
       <button
         className={styles.bar}
+        onClick={() => onRemoveStep(idx)}
         style={{ ["--pct" as string]: percentage }}
       >
         <div
@@ -101,10 +111,17 @@ function HpBar({ current, max, stateData }: HpBarProps) {
 type CoreHpCalculatorProps = {
   hpState: HpStateStack;
   maxHp: number;
+  onRemoveStep: (i: number) => void;
 };
 
-export function CoreHpCalculator({ hpState, maxHp }: CoreHpCalculatorProps) {
+export function CoreHpCalculator({
+  hpState,
+  maxHp,
+  onRemoveStep,
+}: CoreHpCalculatorProps) {
   return (
-    <div className={styles.coreContainer}>{processStates(hpState, maxHp)}</div>
+    <div className={styles.coreContainer}>
+      {processStates(hpState, maxHp, onRemoveStep)}
+    </div>
   );
 }
