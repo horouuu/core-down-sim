@@ -25,7 +25,7 @@ export type HpStateStack = {
 function App() {
   const [stats, setStats] = useState<Stats>({
     strengthLevel: 99,
-    strengthBonus: 0,
+    strengthBonus: 66,
     raidLevel: 500,
     teamSize: 1,
     salted: true,
@@ -121,7 +121,7 @@ function App() {
             <NumberInputBox
               label="Strength bonus"
               name="strengthBonus"
-              defaultValue={0}
+              defaultValue={66}
               onChange={handleStatsChange}
               min={0}
             />
