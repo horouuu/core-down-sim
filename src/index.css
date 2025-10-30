@@ -1,5 +1,18 @@
+@font-face {
+  font-family: "inconsolata";
+  src: url("../Inconsolata.ttf");
+}
+
+#inputs {
+  display: grid;
+  grid-template-columns: auto 30px;
+  gap: 8px 12px;
+  justify-content: start;
+  align-items: center;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "inconsolata";
   line-height: 1.5;
   font-weight: 400;
 
@@ -25,13 +38,13 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
 h1 {
   font-size: 3.2em;
+  font-weight: 300;
   line-height: 1.1;
 }
 
@@ -54,7 +67,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -65,4 +78,8 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+#title {
+  margin-top: 0;
 }
