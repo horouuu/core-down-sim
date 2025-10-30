@@ -1,0 +1,27 @@
+.label {
+  text-align: left;
+  justify-self: start;
+}
+
+.input {
+  margin-left: 5px;
+
+  font-family: inherit;
+  font-weight: 1000;
+  color: rgba(256, 256, 256, 0.75);
+  text-shadow: 1px 1px 0 #000;
+  font-size: 16px;
+  max-width: 100px;
+  text-align: center;
+  background-color: crimson;
+
+  box-shadow: none;
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+  border-radius: 2px;
+}
+
+.input:focus {
+  border: 2px solid #fff;
+}
