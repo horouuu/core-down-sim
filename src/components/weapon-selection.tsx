@@ -1,10 +1,20 @@
 import styles from "./weapon-selection.module.css";
-import { Weapons, type Item } from "../utils/items";
+import { Weapons } from "../utils/items";
 import { getMaxHitToa, getSpecMaxHitToa } from "../utils/calcs";
 
 type WeaponSelectionProps = {
   weapons: string[];
-  onClick: ({ weapon, spec }: { weapon: Item; spec: boolean }) => void;
+  onClick: ({
+    weaponId,
+    weaponTicks,
+    dmg,
+    spec,
+  }: {
+    weaponId: number;
+    weaponTicks: number;
+    dmg: number;
+    spec: boolean;
+  }) => void;
   stats: { strengthLevel: number; strengthBonus: number };
 };
 
@@ -25,25 +35,34 @@ export function WeaponSelection({
           e[1].name.toLowerCase().includes(wName)
         );
         if (!weapon) return [];
+
+        const wepData = weapon[1].weapon;
+        if (!wepData) return [];
+
+        const dmg = spec
+          ? getSpecMaxHitToa(
+              weapon[1],
+              stats.strengthLevel,
+              stats.strengthBonus
+            )
+          : getMaxHitToa(weapon[1], stats.strengthLevel, stats.strengthBonus);
+
         return [
           <div className={styles.buttonContainer} key={i}>
             <button
               className={spec ? styles.specWepButton : styles.normalWepButton}
-              onClick={() => onClick({ weapon: weapon[1], spec })}
+              onClick={() =>
+                onClick({
+                  weaponId: weapon[1].id,
+                  weaponTicks: wepData.attack_speed,
+                  dmg,
+                  spec,
+                })
+              }
             >
               <img src={`${ICONS_URL}/${weapon[1].id}.png`} />
             </button>
-            {spec
-              ? getSpecMaxHitToa(
-                  weapon[1],
-                  stats.strengthLevel,
-                  stats.strengthBonus
-                )
-              : getMaxHitToa(
-                  weapon[1],
-                  stats.strengthLevel,
-                  stats.strengthBonus
-                )}
+            {dmg}
           </div>,
         ];
       })}

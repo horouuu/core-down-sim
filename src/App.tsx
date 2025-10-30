@@ -1,4 +1,5 @@
 import "./App.css";
+import { CoreHpCalculator } from "./components/core-hp";
 import { InputBox } from "./components/input-box";
 import { WeaponSelection } from "./components/weapon-selection";
 import { useState } from "react";
@@ -11,6 +12,13 @@ type Stats = {
   salted: boolean;
 };
 
+export type HpStateStack = {
+  weaponId: number;
+  weaponTicks: number;
+  dmg: number;
+  spec: boolean;
+}[];
+
 function App() {
   const [stats, setStats] = useState<Stats>({
     strengthLevel: 99,
@@ -20,12 +28,27 @@ function App() {
     salted: true,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [hpState, setHpState] = useState<HpStateStack>([]);
+
+  const handleStatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setStats({ ...stats, [name]: parseInt(value) });
   };
 
-  console.log(stats);
+  const handleAddAttack = ({
+    weaponId,
+    weaponTicks,
+    dmg,
+    spec,
+  }: {
+    weaponId: number;
+    weaponTicks: number;
+    dmg: number;
+    spec: boolean;
+  }) => {
+    setHpState([...hpState, { weaponId, weaponTicks, dmg, spec }]);
+  };
+
   return (
     <>
       <h1 id="title">core down simulator</h1>
@@ -35,25 +58,25 @@ function App() {
             label="Strength level"
             name="strengthLevel"
             defaultValue={99}
-            onChange={handleChange}
+            onChange={handleStatsChange}
           />
           <InputBox
             label="Strength bonus"
             name="strengthBonus"
             defaultValue={0}
-            onChange={handleChange}
+            onChange={handleStatsChange}
           />
           <InputBox
             label="Raid level"
             name="raidLevel"
             defaultValue={500}
-            onChange={handleChange}
+            onChange={handleStatsChange}
           />
           <InputBox
             label="Team size"
             name="teamSize"
             defaultValue={1}
-            onChange={handleChange}
+            onChange={handleStatsChange}
           />
         </div>
         <WeaponSelection
@@ -73,10 +96,11 @@ function App() {
             "tentacle",
             "voidwaker",
           ]}
-          onClick={({ weapon, spec }) => console.log(weapon, spec)}
+          onClick={handleAddAttack}
           stats={stats}
         />
       </div>
+      <CoreHpCalculator maxHp={6750} hpState={hpState} />
     </>
   );
 }

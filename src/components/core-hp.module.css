@@ -1,0 +1,48 @@
+.bar {
+  position: relative;
+  width: 220px;
+  height: 22px;
+  background: rgba(256, 0, 0, 0.5);
+  border-radius: 2px;
+  overflow: hidden;
+  padding: 0;
+
+  transition: opacity 0.25s ease;
+
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.bar:hover {
+  opacity: 0.5
+}
+
+.bar:focus {
+  outline: none;
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: calc(var(--pct) * 100%);
+  background: rgba(0, 256, 0, 0.5);
+  z-index: 0;
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  color: white;
+  text-shadow: 1px 1px 0 black;
+  pointer-events: none;
+}
+
+.coreContainer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  align-items: center;
+}
