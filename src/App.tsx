@@ -35,7 +35,11 @@ function App() {
   const handleStatsChange = (name: string, value: number) => {
     const newStats = { ...stats, [name]: value };
     setStats(newStats);
-    if (name === "strengthLevel" || name === "strengthBonus") {
+    if (
+      name === "strengthLevel" ||
+      name === "strengthBonus" ||
+      name === "teamSize"
+    ) {
       setHpState(
         hpState.map((step) => ({
           ...step,
@@ -44,12 +48,12 @@ function App() {
                 step.weapon,
                 newStats.strengthLevel,
                 newStats.strengthBonus
-              )
+              ) * newStats.teamSize
             : getMaxHitToa(
                 step.weapon,
                 newStats.strengthLevel,
                 newStats.strengthBonus
-              ),
+              ) * newStats.teamSize,
         }))
       );
     }
@@ -66,7 +70,10 @@ function App() {
     dmg: number;
     spec: boolean;
   }) => {
-    setHpState([...hpState, { weapon, weaponTicks, dmg, spec }]);
+    setHpState([
+      ...hpState,
+      { weapon, weaponTicks, dmg: dmg * stats.teamSize, spec },
+    ]);
   };
 
   const handleRemoveStep = (i: number) => {
