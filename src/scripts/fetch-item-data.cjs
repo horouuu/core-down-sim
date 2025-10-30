@@ -15,7 +15,8 @@ fetch(
 
       const finalData = Object.fromEntries(
         Object.entries(data).flatMap(([k, v]) => {
-          if (!v.equipment) return [];
+          if (!v.equipment || (!v.weapon && v.equipment.slot !== "shield"))
+            return [];
           const str = parseInt(v.equipment.melee_strength);
           if (str === 0 || isNaN(str)) return [];
           return [
@@ -25,6 +26,7 @@ fetch(
                 id: v.id,
                 name: v.name,
                 equipment: v.equipment,
+                weapon: v.weapon,
               },
             ],
           ];

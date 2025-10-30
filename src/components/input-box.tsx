@@ -4,13 +4,15 @@ import styles from "./input-box.module.css";
 
 type InputBoxProps = {
   label: string;
+  name: string;
   width?: number;
   height?: number;
   defaultValue?: number;
 };
 
 export function InputBox({
-  label: label,
+  label,
+  name,
   width = 30,
   height = 30,
   defaultValue,
@@ -23,6 +25,7 @@ export function InputBox({
       </label>
       <input
         id={inputId}
+        name={name}
         className={styles.input}
         style={{ width, height }}
         defaultValue={defaultValue}
