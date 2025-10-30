@@ -1,6 +1,6 @@
 import "./App.css";
 import { CoreHpCalculator } from "./components/core-hp";
-import { InputBox } from "./components/input-box";
+import { Checkbox, NumberInputBox } from "./components/input-box";
 import { WeaponSelection } from "./components/weapon-selection";
 import { useState } from "react";
 import { getMaxHitToa, getSpecMaxHitToa } from "./utils/calcs";
@@ -12,6 +12,7 @@ type Stats = {
   raidLevel: number;
   teamSize: 1;
   salted: boolean;
+  avernic: boolean;
 };
 
 export type HpStateStack = {
@@ -28,12 +29,13 @@ function App() {
     raidLevel: 500,
     teamSize: 1,
     salted: true,
+    avernic: true,
   });
 
   const [hpState, setHpState] = useState<HpStateStack>([]);
   const [subQueue, setSubQueue] = useState<number[]>([]);
 
-  const handleStatsChange = (name: string, value: number) => {
+  const handleStatsChange = (name: string, value: number | boolean) => {
     const newStats = { ...stats, [name]: value };
     setStats(newStats);
     if (
@@ -107,7 +109,7 @@ function App() {
       <h1 id="title">core down simulator</h1>
       <div id="content">
         <div id="inputs">
-          <InputBox
+          <NumberInputBox
             label="Strength level"
             name="strengthLevel"
             defaultValue={99}
@@ -115,14 +117,14 @@ function App() {
             min={1}
             max={99}
           />
-          <InputBox
+          <NumberInputBox
             label="Strength bonus"
             name="strengthBonus"
             defaultValue={0}
             onChange={handleStatsChange}
             min={0}
           />
-          <InputBox
+          <NumberInputBox
             label="Raid level"
             name="raidLevel"
             defaultValue={500}
@@ -130,13 +132,19 @@ function App() {
             min={0}
             max={600}
           />
-          <InputBox
+          <NumberInputBox
             label="Team size"
             name="teamSize"
             defaultValue={1}
             onChange={handleStatsChange}
             min={1}
             max={8}
+          />
+          <Checkbox
+            label="Avernic"
+            name="avernic"
+            defaultChecked={true}
+            onChange={handleStatsChange}
           />
         </div>
         <WeaponSelection

@@ -3,12 +3,18 @@ import type { Item } from "./items";
 export function getMaxHitToa(
   weapon: Item,
   strLvl: number,
-  equipmentStr: number
+  equipmentStr: number,
+  avernic: boolean = true
 ) {
   const saltBonus = 11 + Math.floor(0.16 * strLvl);
+  const twoHanded = weapon.equipment.slot === "2h";
+  const defenderOffset = twoHanded ? (avernic ? 8 : 6) : 0;
   const effStr = Math.floor((strLvl + saltBonus) * 1.23) + 3 + 8;
   const maxHit = Math.floor(
-    (effStr * (weapon.equipment.melee_strength + equipmentStr + 64) + 320) / 640
+    (effStr *
+      (weapon.equipment.melee_strength + equipmentStr - defenderOffset + 64) +
+      320) /
+      640
   );
 
   if (weapon.id === 26219) return Math.floor(maxHit * 0.85); // fang
@@ -18,9 +24,10 @@ export function getMaxHitToa(
 export function getSpecMaxHitToa(
   weapon: Item,
   strLvl: number,
-  equipmentStr: number
+  equipmentStr: number,
+  avernic: boolean = true
 ) {
-  const maxHit = getMaxHitToa(weapon, strLvl, equipmentStr);
+  const maxHit = getMaxHitToa(weapon, strLvl, equipmentStr, avernic);
   if (weapon.id === 26219) {
     // fang
     return Math.floor(maxHit / 0.85);

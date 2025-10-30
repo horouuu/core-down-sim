@@ -15,7 +15,7 @@ type WeaponSelectionProps = {
     dmg: number;
     spec: boolean;
   }) => void;
-  stats: { strengthLevel: number; strengthBonus: number };
+  stats: { strengthLevel: number; strengthBonus: number; avernic: boolean };
 };
 
 const ICONS_URL = `https://cdn.jsdelivr.net/gh/0xNeffarion/osrsreboxed-db@37322fed3abb2d58236c59dfc6babb37a27a50ea/docs/items-icons/`;
@@ -43,9 +43,15 @@ export function WeaponSelection({
           ? getSpecMaxHitToa(
               weapon[1],
               stats.strengthLevel,
-              stats.strengthBonus
+              stats.strengthBonus,
+              stats.avernic
             )
-          : getMaxHitToa(weapon[1], stats.strengthLevel, stats.strengthBonus);
+          : getMaxHitToa(
+              weapon[1],
+              stats.strengthLevel,
+              stats.strengthBonus,
+              stats.avernic
+            );
 
         return [
           <div className={styles.buttonContainer} key={i}>

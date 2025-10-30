@@ -16,7 +16,7 @@
   display: grid;
   grid-template-columns: auto max-content;
   gap: 8px 12px;
-  justify-content: start;
+  grid-auto-rows: 30px;
   align-items: center;
   height: fit-content;
 }
