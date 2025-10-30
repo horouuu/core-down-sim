@@ -31,6 +31,7 @@ function App() {
   });
 
   const [hpState, setHpState] = useState<HpStateStack>([]);
+  const [subQueue, setSubQueue] = useState<number[]>([]);
 
   const handleStatsChange = (name: string, value: number) => {
     const newStats = { ...stats, [name]: value };
@@ -70,10 +71,31 @@ function App() {
     dmg: number;
     spec: boolean;
   }) => {
-    setHpState([
-      ...hpState,
-      { weapon, weaponTicks, dmg: dmg * stats.teamSize, spec },
-    ]);
+    const newStep = { weapon, weaponTicks, dmg: dmg * stats.teamSize, spec };
+    if (subQueue.length > 0) {
+      const first = subQueue[0];
+      setSubQueue(subQueue.slice(1));
+      setHpState([
+        ...hpState.slice(0, first),
+        newStep,
+        ...hpState.slice(first + 1),
+      ]);
+    } else {
+      setHpState([...hpState, newStep]);
+    }
+  };
+
+  const handleSubstituteStep = (idx: number) => {
+    if (idx < hpState.length) {
+      const obj = { ...hpState[idx], dmg: -1 };
+      const newHpState = [
+        ...hpState.slice(0, idx),
+        obj,
+        ...hpState.slice(idx + 1),
+      ];
+      setHpState(newHpState);
+      setSubQueue([...subQueue, idx]);
+    }
   };
 
   const handleRemoveStep = (i: number) => {
@@ -147,6 +169,7 @@ function App() {
         )}
         hpState={hpState}
         onRemoveStep={handleRemoveStep}
+        onSubstituteStep={handleSubstituteStep}
       />
     </>
   );

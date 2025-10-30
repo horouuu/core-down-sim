@@ -32,6 +32,16 @@
   z-index: 0;
 }
 
+.fillSubbed {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background: gray;
+  z-index: 0;
+}
+
 .label {
   position: relative;
   z-index: 1;
@@ -62,10 +72,19 @@
   background: rgba(255, 0, 0, 0.25);
   border-radius: 2px;
   text-shadow: 1px 1px 0 black;
-  color: rgba(255, 192, 192, 0.75)
+  color: rgba(255, 192, 192, 0.75);
 }
 
 .img {
   width: 22px;
   height: 22px;
+}
+
+.subbedBox {
+  min-width: 62px;
+  height: 22px;
+  background: rgba(255, 0, 0, 0.25);
+  border-radius: 2px;
+  text-shadow: 1px 1px 0 black;
+  color: rgba(255, 192, 192, 0.75);
 }

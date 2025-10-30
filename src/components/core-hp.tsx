@@ -8,6 +8,7 @@ type HpBarProps = {
   max: number;
   stateData: { weaponId: number; dmg: number };
   onRemoveStep: (i: number) => void;
+  onSubstituteStep: (i: number) => void;
   idx: number;
 };
 
@@ -38,7 +39,8 @@ function getCoreState(hpPct: number) {
 const processStates = (
   hpState: HpStateStack,
   maxHp: number,
-  onRemoveStep: (i: number) => void
+  onRemoveStep: (i: number) => void,
+  onSubstituteStep: (i: number) => void
 ) => {
   const reduced = hpState.reduce<[number, number][]>((acc, stateData) => {
     const last = acc.at(-1) ?? [maxHp, 1, 0, 1];
@@ -57,6 +59,7 @@ const processStates = (
         idx={i}
         current={step[0]}
         onRemoveStep={onRemoveStep}
+        onSubstituteStep={onSubstituteStep}
         max={maxHp}
         stateData={{
           dmg: hpState[i].dmg,
@@ -82,28 +85,52 @@ const processStates = (
   return final;
 };
 
-function HpBar({ current, max, stateData, onRemoveStep, idx }: HpBarProps) {
+function HpBar({
+  current,
+  max,
+  stateData,
+  onRemoveStep,
+  onSubstituteStep,
+  idx,
+}: HpBarProps) {
   const { weaponId, dmg } = stateData;
+  const subbed = dmg < 0;
   const percentage = Math.max(0, Math.min(1, current / max || 0));
   const pText = `${Math.floor(percentage * 100)}%`;
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>, idx: number) => {
+    if (e.shiftKey) {
+      onSubstituteStep(idx);
+    } else {
+      onRemoveStep(idx);
+    }
+  };
 
   return (
     <div className={styles.barContainer}>
       <button
         className={styles.bar}
-        onClick={() => onRemoveStep(idx)}
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+          handleClick(e, idx)
+        }
         style={{ ["--pct" as string]: percentage }}
       >
         <div
-          className={styles.fill}
+          className={subbed ? styles.fillSubbed : styles.fill}
           style={{ ["--pct" as string]: percentage }}
         />
         <label className={styles.label}>
-          {current}/{max} [{pText}]
+          {subbed ? "?" : `${current}/${max} [${pText}]`}
         </label>
       </button>
-      <div className={styles.dmgBox}>{dmg * 5}</div>
-      <img className={styles.img} src={`${ICONS_URL}/${weaponId}.png`} />
+      {subbed ? (
+        <div className={styles.subbedBox}>?</div>
+      ) : (
+        <>
+          <div className={styles.dmgBox}>{dmg * 5}</div>
+          <img className={styles.img} src={`${ICONS_URL}/${weaponId}.png`} />
+        </>
+      )}
     </div>
   );
 }
@@ -112,16 +139,18 @@ type CoreHpCalculatorProps = {
   hpState: HpStateStack;
   maxHp: number;
   onRemoveStep: (i: number) => void;
+  onSubstituteStep: (i: number) => void;
 };
 
 export function CoreHpCalculator({
   hpState,
   maxHp,
   onRemoveStep,
+  onSubstituteStep,
 }: CoreHpCalculatorProps) {
   return (
     <div className={styles.coreContainer}>
-      {processStates(hpState, maxHp, onRemoveStep)}
+      {processStates(hpState, maxHp, onRemoveStep, onSubstituteStep)}
     </div>
   );
 }
