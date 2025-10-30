@@ -1,37 +1,102 @@
 import type { HpStateStack } from "../App";
 import styles from "./core-hp.module.css";
 
+const ICONS_URL = `https://cdn.jsdelivr.net/gh/0xNeffarion/osrsreboxed-db@37322fed3abb2d58236c59dfc6babb37a27a50ea/docs/items-icons/`;
+
 type HpBarProps = {
   current: number;
   max: number;
+  stateData: { weaponId: number; dmg: number };
 };
 
-function addThreshold(ticks: number, core: number) {
-  if (core === 1) {
-    return ticks - 21 > 0 ? 1 : 0;
-  } else if (core === 2) {
-    return ticks - 29 > 0 ? 1 : 0;
-  } else if (core >= 3) {
-    return ticks - 37 > 0 ? 1 : 0;
+function getCoreTime(coreState: number) {
+  if (coreState === 1) {
+    return 21;
+  } else if (coreState === 2) {
+    return 29;
+  } else if (coreState >= 3) {
+    return 37;
   } else {
     return 0;
   }
 }
 
-function HpBar({ current, max }: HpBarProps) {
+function getCoreState(hpPct: number) {
+  if (hpPct >= 0.8) {
+    return 1;
+  } else if (hpPct >= 0.6) {
+    return 2;
+  } else if (hpPct < 0.6) {
+    return 3;
+  } else {
+    return 1;
+  }
+}
+
+function processStates(hpState: HpStateStack, maxHp: number) {
+  const reduced = hpState.reduce<[number, number][]>((acc, stateData) => {
+    const last = acc.at(-1) ?? [maxHp, 1, 0, 1];
+    const currHp = last[0] - stateData.dmg * 5;
+    acc.push([currHp, stateData.weaponTicks]);
+    return acc;
+  }, []);
+
+  let coreState = 1;
+  let coreNum = 1;
+  let ticks = getCoreTime(coreState);
+  const final = reduced.flatMap((step, i) => {
+    if (ticks >= 0) {
+      ticks -= step[1];
+    }
+
+    const comp = (
+      <HpBar
+        current={step[0]}
+        max={maxHp}
+        stateData={{
+          dmg: hpState[i].dmg,
+          weaponId: hpState[i].weaponId,
+        }}
+      />
+    );
+
+    if (ticks < 0 || i == 0) {
+      coreState = getCoreState(step[0] / maxHp);
+      if (ticks < 0) {
+        ticks = getCoreTime(coreState);
+        coreNum += 1;
+      }
+      return [<label>Core {coreNum}</label>, comp];
+    } else {
+      return [comp];
+    }
+  });
+
+  return final;
+}
+
+function HpBar({ current, max, stateData }: HpBarProps) {
+  const { weaponId, dmg } = stateData;
   const percentage = Math.max(0, Math.min(1, current / max || 0));
   const pText = `${Math.floor(percentage * 100)}%`;
 
   return (
-    <button className={styles.bar} style={{ ["--pct" as string]: percentage }}>
-      <div
-        className={styles.fill}
+    <div className={styles.barContainer}>
+      <button
+        className={styles.bar}
         style={{ ["--pct" as string]: percentage }}
-      />
-      <label className={styles.label}>
-        {current}/{max} [{pText}]
-      </label>
-    </button>
+      >
+        <div
+          className={styles.fill}
+          style={{ ["--pct" as string]: percentage }}
+        />
+        <label className={styles.label}>
+          {current}/{max} [{pText}]
+        </label>
+      </button>
+      <div className={styles.dmgBox}>{dmg * 5}</div>
+      <img className={styles.img} src={`${ICONS_URL}/${weaponId}.png`} />
+    </div>
   );
 }
 
@@ -42,30 +107,6 @@ type CoreHpCalculatorProps = {
 
 export function CoreHpCalculator({ hpState, maxHp }: CoreHpCalculatorProps) {
   return (
-    <div className={styles.coreContainer}>
-      {hpState
-        .reduce<[number, number, number, number][]>((acc, stateData) => {
-          const last = acc.at(-1) ?? [maxHp, 1, 0, 1];
-          const currentTicks = last[1] + last[2];
-          const threshChange = addThreshold(currentTicks, last[3]);
-          acc.push([
-            last[0] - stateData.dmg * 5, // dmg
-            threshChange === 1 ? 1 : currentTicks, // current tick; reset to 0 if threshold has changed
-            stateData.weaponTicks, // ticks spent,
-            last[3] + threshChange, // core number
-          ]);
-          return acc;
-        }, [])
-        .flatMap((states, i, arr) => {
-          if (i == 0 || (i > 0 && states[3] !== arr[i - 1][3])) {
-            return [
-              <label>Core {states[3]}</label>,
-              <HpBar current={states[0]} max={maxHp} />,
-            ];
-          } else {
-            return [<HpBar current={states[0]} max={maxHp} />];
-          }
-        })}
-    </div>
+    <div className={styles.coreContainer}>{processStates(hpState, maxHp)}</div>
   );
 }
