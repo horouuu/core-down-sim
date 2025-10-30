@@ -1,0 +1,13 @@
+services:
+  nginx:
+    container_name: core-down-sim
+    build:
+      dockerfile: ./Dockerfile
+    volumes:
+      - cds:/var/lib/docker/volumes
+    restart: unless-stopped
+    ports:
+      - 8083:80
+
+volumes:
+  cds:
