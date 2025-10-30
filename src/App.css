@@ -27,3 +27,19 @@
   justify-content: space-between;
   width: 100%;
 }
+
+#title {
+  margin: 0;
+  border-bottom: 1px solid #666;
+  margin-bottom: 15px;
+}
+
+#title::after {
+  content: "1) try shift-clicking on a row to substitute it\A 2) clicking on a row will delete it and pull the other rows up\A 3) strength bonus is your equipment strength with no mainhand";
+  display: block;
+  white-space: pre-line;
+  justify-self: start;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 100;
+}
