@@ -134,7 +134,9 @@ function App() {
       <CoreHpCalculator
         maxHp={Math.max(
           4500,
-          4500 * (1 + Math.floor(stats.raidLevel / 5) * 0.02)
+          4500 *
+            (1 + Math.floor(stats.raidLevel / 20) * 0.02) *
+            (1 + 0.9 * (stats.teamSize - 1))
         )}
         hpState={hpState}
         onRemoveStep={handleRemoveStep}
