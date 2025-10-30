@@ -25,8 +25,8 @@ export function NumberInputBox(props: NumberProps) {
   const {
     label,
     name,
-    width = 30,
-    height = 30,
+    width = 35,
+    height = 25,
     onChange,
     defaultValue = 0,
     min,
