@@ -98,8 +98,8 @@ function HpBar({
   const percentage = Math.max(0, Math.min(1, current / max || 0));
   const pText = `${Math.floor(percentage * 100)}%`;
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>, idx: number) => {
-    if (e.shiftKey) {
+  const handleClick = (e: React.MouseEvent, idx: number) => {
+    if (e.shiftKey && !subbed) {
       onSubstituteStep(idx);
     } else {
       onRemoveStep(idx);
@@ -108,6 +108,27 @@ function HpBar({
 
   return (
     <div className={styles.barContainer}>
+      {subbed ? (
+        <div className={styles.subbedBox}>?</div>
+      ) : (
+        <>
+          <img
+            className={styles.img}
+            src={`${ICONS_URL}/${weaponId}.png`}
+            onClick={(e: React.MouseEvent<HTMLImageElement>) =>
+              handleClick(e, idx)
+            }
+          />
+          <div
+            className={styles.dmgBox}
+            onClick={(e: React.MouseEvent<HTMLDivElement>) =>
+              handleClick(e, idx)
+            }
+          >
+            {dmg * 5}
+          </div>
+        </>
+      )}
       <button
         className={styles.bar}
         onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
@@ -123,14 +144,6 @@ function HpBar({
           {subbed ? "?" : `${current}/${max} [${pText}]`}
         </label>
       </button>
-      {subbed ? (
-        <div className={styles.subbedBox}>?</div>
-      ) : (
-        <>
-          <div className={styles.dmgBox}>{dmg * 5}</div>
-          <img className={styles.img} src={`${ICONS_URL}/${weaponId}.png`} />
-        </>
-      )}
     </div>
   );
 }

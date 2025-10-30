@@ -107,78 +107,80 @@ function App() {
   return (
     <>
       <h1 id="title">core down simulator</h1>
-      <div id="content">
-        <div id="inputs">
-          <NumberInputBox
-            label="Strength level"
-            name="strengthLevel"
-            defaultValue={99}
-            onChange={handleStatsChange}
-            min={1}
-            max={99}
-          />
-          <NumberInputBox
-            label="Strength bonus"
-            name="strengthBonus"
-            defaultValue={0}
-            onChange={handleStatsChange}
-            min={0}
-          />
-          <NumberInputBox
-            label="Raid level"
-            name="raidLevel"
-            defaultValue={500}
-            onChange={handleStatsChange}
-            min={0}
-            max={600}
-          />
-          <NumberInputBox
-            label="Team size"
-            name="teamSize"
-            defaultValue={1}
-            onChange={handleStatsChange}
-            min={1}
-            max={8}
-          />
-          <Checkbox
-            label="Avernic"
-            name="avernic"
-            defaultChecked={true}
-            onChange={handleStatsChange}
+      <div id="container">
+        <div id="content">
+          <div id="inputs">
+            <NumberInputBox
+              label="Strength level"
+              name="strengthLevel"
+              defaultValue={99}
+              onChange={handleStatsChange}
+              min={1}
+              max={99}
+            />
+            <NumberInputBox
+              label="Strength bonus"
+              name="strengthBonus"
+              defaultValue={0}
+              onChange={handleStatsChange}
+              min={0}
+            />
+            <NumberInputBox
+              label="Raid level"
+              name="raidLevel"
+              defaultValue={500}
+              onChange={handleStatsChange}
+              min={0}
+              max={600}
+            />
+            <NumberInputBox
+              label="Team size"
+              name="teamSize"
+              defaultValue={1}
+              onChange={handleStatsChange}
+              min={1}
+              max={8}
+            />
+            <Checkbox
+              label="Avernic"
+              name="avernic"
+              defaultChecked={true}
+              onChange={handleStatsChange}
+            />
+          </div>
+          <WeaponSelection
+            weapons={[
+              "bandos god",
+              "*bandos god",
+              "dragon dagg",
+              "*dragon dagg",
+              "dragon claws",
+              "*dragon claws",
+              "burning claws",
+              "*burning claws",
+              "fang",
+              "*fang",
+              "ghrazi",
+              "keris partisan",
+              "tentacle",
+              "voidwaker",
+            ]}
+            onClick={handleAddAttack}
+            stats={stats}
           />
         </div>
-        <WeaponSelection
-          weapons={[
-            "bandos god",
-            "*bandos god",
-            "dragon dagg",
-            "*dragon dagg",
-            "dragon claws",
-            "*dragon claws",
-            "burning claws",
-            "*burning claws",
-            "fang",
-            "*fang",
-            "ghrazi",
-            "keris partisan",
-            "tentacle",
-            "voidwaker",
-          ]}
-          onClick={handleAddAttack}
-          stats={stats}
+        <CoreHpCalculator
+          maxHp={Math.max(
+            4500,
+            4500 *
+              (1 + Math.floor(stats.raidLevel / 20) * 0.02) *
+              (1 + 0.9 * (stats.teamSize - 1))
+          )}
+          hpState={hpState}
+          onRemoveStep={handleRemoveStep}
+          onSubstituteStep={handleSubstituteStep}
         />
       </div>
-      <CoreHpCalculator
-        maxHp={Math.max(
-          4500,
-          4500 *
-            (1 + Math.floor(stats.raidLevel / 20) * 0.02) *
-            (1 + 0.9 * (stats.teamSize - 1))
-        )}
-        hpState={hpState}
-        onRemoveStep={handleRemoveStep}
-        onSubstituteStep={handleSubstituteStep}
-      />
     </>
   );
 }
