@@ -168,6 +168,15 @@ function App() {
             onClick={handleAddAttack}
             stats={stats}
           />
+          <button
+            id="button"
+            onClick={() => {
+              setHpState([]);
+              setSubQueue([]);
+            }}
+          >
+            Clear!
+          </button>
         </div>
         <CoreHpCalculator
           maxHp={Math.max(
