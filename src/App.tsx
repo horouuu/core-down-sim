@@ -8,6 +8,7 @@ type Stats = {
   strengthBonus: number;
   raidLevel: number;
   teamSize: 1;
+  salted: boolean;
 };
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
     strengthBonus: 0,
     raidLevel: 500,
     teamSize: 1,
+    salted: true,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +25,7 @@ function App() {
     setStats({ ...stats, [name]: parseInt(value) });
   };
 
+  console.log(stats);
   return (
     <>
       <h1 id="title">core down simulator</h1>
@@ -62,7 +65,7 @@ function App() {
             "dragon claws",
             "*dragon claws",
             "burning claws",
-            "burning claws",
+            "*burning claws",
             "fang",
             "*fang",
             "ghrazi",

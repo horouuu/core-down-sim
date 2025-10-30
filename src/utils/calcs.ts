@@ -11,5 +11,35 @@ export function getMaxHitToa(
     (effStr * (weapon.equipment.melee_strength + equipmentStr + 64) + 320) / 640
   );
 
+  if (weapon.id === 26219) return Math.floor(maxHit * 0.85); // fang
+  return maxHit;
+}
+
+export function getSpecMaxHitToa(
+  weapon: Item,
+  strLvl: number,
+  equipmentStr: number
+) {
+  const maxHit = getMaxHitToa(weapon, strLvl, equipmentStr);
+  if (weapon.id === 26219) {
+    // fang
+    return Math.floor(maxHit / 0.85);
+  } else if (weapon.id === 11804) {
+    // bgs
+    return Math.floor(maxHit * 1.21);
+  } else if (weapon.id === 1215) {
+    // dds
+    return Math.floor(maxHit * 1.15) * 2;
+  } else if (weapon.id === 13652) {
+    // dclaws
+    const firstHit = maxHit - 1;
+    const secondHit = Math.floor(firstHit / 2);
+    const thirdHit = Math.floor(secondHit / 2);
+    const fourthHit = thirdHit + 1;
+    return firstHit + secondHit + thirdHit + fourthHit;
+  } else if (weapon.id === 29577) {
+    return Math.floor(maxHit * 1.75);
+  }
+
   return maxHit;
 }

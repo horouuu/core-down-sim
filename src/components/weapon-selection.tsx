@@ -1,12 +1,14 @@
 import styles from "./weapon-selection.module.css";
 import { Weapons, type Item } from "../utils/items";
-import { getMaxHitToa } from "../utils/calcs";
+import { getMaxHitToa, getSpecMaxHitToa } from "../utils/calcs";
 
 type WeaponSelectionProps = {
   weapons: string[];
   onClick: ({ weapon, spec }: { weapon: Item; spec: boolean }) => void;
   stats: { strengthLevel: number; strengthBonus: number };
 };
+
+const ICONS_URL = `https://cdn.jsdelivr.net/gh/0xNeffarion/osrsreboxed-db@37322fed3abb2d58236c59dfc6babb37a27a50ea/docs/items-icons/`;
 
 export function WeaponSelection({
   weapons,
@@ -29,11 +31,19 @@ export function WeaponSelection({
               className={spec ? styles.specWepButton : styles.normalWepButton}
               onClick={() => onClick({ weapon: weapon[1], spec })}
             >
-              <img
-                src={`https://raw.githubusercontent.com/0xNeffarion/osrsreboxed-db/master/docs/items-icons/${weapon[1].id}.png`}
-              />
+              <img src={`${ICONS_URL}/${weapon[1].id}.png`} />
             </button>
-            {getMaxHitToa(weapon[1], stats.strengthLevel, stats.strengthBonus)}
+            {spec
+              ? getSpecMaxHitToa(
+                  weapon[1],
+                  stats.strengthLevel,
+                  stats.strengthBonus
+                )
+              : getMaxHitToa(
+                  weapon[1],
+                  stats.strengthLevel,
+                  stats.strengthBonus
+                )}
           </div>,
         ];
       })}
