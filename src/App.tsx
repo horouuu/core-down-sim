@@ -3,6 +3,8 @@ import { CoreHpCalculator } from "./components/core-hp";
 import { InputBox } from "./components/input-box";
 import { WeaponSelection } from "./components/weapon-selection";
 import { useState } from "react";
+import { getMaxHitToa, getSpecMaxHitToa } from "./utils/calcs";
+import type { Item } from "./utils/items";
 
 type Stats = {
   strengthLevel: number;
@@ -13,7 +15,7 @@ type Stats = {
 };
 
 export type HpStateStack = {
-  weaponId: number;
+  weapon: Item;
   weaponTicks: number;
   dmg: number;
   spec: boolean;
@@ -30,23 +32,41 @@ function App() {
 
   const [hpState, setHpState] = useState<HpStateStack>([]);
 
-  const handleStatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setStats({ ...stats, [name]: parseInt(value) });
+  const handleStatsChange = (name: string, value: number) => {
+    const newStats = { ...stats, [name]: value };
+    setStats(newStats);
+    if (name === "strengthLevel" || name === "strengthBonus") {
+      setHpState(
+        hpState.map((step) => ({
+          ...step,
+          dmg: step.spec
+            ? getSpecMaxHitToa(
+                step.weapon,
+                newStats.strengthLevel,
+                newStats.strengthBonus
+              )
+            : getMaxHitToa(
+                step.weapon,
+                newStats.strengthLevel,
+                newStats.strengthBonus
+              ),
+        }))
+      );
+    }
   };
 
   const handleAddAttack = ({
-    weaponId,
+    weapon,
     weaponTicks,
     dmg,
     spec,
   }: {
-    weaponId: number;
+    weapon: Item;
     weaponTicks: number;
     dmg: number;
     spec: boolean;
   }) => {
-    setHpState([...hpState, { weaponId, weaponTicks, dmg, spec }]);
+    setHpState([...hpState, { weapon, weaponTicks, dmg, spec }]);
   };
 
   const handleRemoveStep = (i: number) => {
@@ -63,24 +83,31 @@ function App() {
             name="strengthLevel"
             defaultValue={99}
             onChange={handleStatsChange}
+            min={1}
+            max={99}
           />
           <InputBox
             label="Strength bonus"
             name="strengthBonus"
             defaultValue={0}
             onChange={handleStatsChange}
+            min={0}
           />
           <InputBox
             label="Raid level"
             name="raidLevel"
             defaultValue={500}
             onChange={handleStatsChange}
+            min={0}
+            max={600}
           />
           <InputBox
             label="Team size"
             name="teamSize"
             defaultValue={1}
             onChange={handleStatsChange}
+            min={1}
+            max={8}
           />
         </div>
         <WeaponSelection
@@ -105,7 +132,10 @@ function App() {
         />
       </div>
       <CoreHpCalculator
-        maxHp={6750}
+        maxHp={Math.max(
+          4500,
+          4500 * (1 + Math.floor(stats.raidLevel / 5) * 0.02)
+        )}
         hpState={hpState}
         onRemoveStep={handleRemoveStep}
       />

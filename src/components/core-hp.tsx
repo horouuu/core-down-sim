@@ -60,7 +60,7 @@ const processStates = (
         max={maxHp}
         stateData={{
           dmg: hpState[i].dmg,
-          weaponId: hpState[i].weaponId,
+          weaponId: hpState[i].weapon.id,
         }}
       />
     );

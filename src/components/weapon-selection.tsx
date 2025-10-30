@@ -1,16 +1,16 @@
 import styles from "./weapon-selection.module.css";
-import { Weapons } from "../utils/items";
+import { Weapons, type Item } from "../utils/items";
 import { getMaxHitToa, getSpecMaxHitToa } from "../utils/calcs";
 
 type WeaponSelectionProps = {
   weapons: string[];
   onClick: ({
-    weaponId,
+    weapon,
     weaponTicks,
     dmg,
     spec,
   }: {
-    weaponId: number;
+    weapon: Item;
     weaponTicks: number;
     dmg: number;
     spec: boolean;
@@ -53,7 +53,7 @@ export function WeaponSelection({
               className={spec ? styles.specWepButton : styles.normalWepButton}
               onClick={() =>
                 onClick({
-                  weaponId: weapon[1].id,
+                  weapon: weapon[1],
                   weaponTicks: wepData.attack_speed,
                   dmg,
                   spec,
