@@ -96,7 +96,7 @@ function App() {
         ...hpState.slice(idx + 1),
       ];
       setHpState(newHpState);
-      setSubQueue([...subQueue, idx]);
+      setSubQueue([...subQueue, idx].sort());
     }
   };
 
