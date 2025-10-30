@@ -45,10 +45,6 @@ function processStates(hpState: HpStateStack, maxHp: number) {
   let coreNum = 1;
   let ticks = getCoreTime(coreState);
   const final = reduced.flatMap((step, i) => {
-    if (ticks >= 0) {
-      ticks -= step[1];
-    }
-
     const comp = (
       <HpBar
         current={step[0]}
@@ -60,14 +56,16 @@ function processStates(hpState: HpStateStack, maxHp: number) {
       />
     );
 
-    if (ticks < 0 || i == 0) {
+    if (ticks <= 0) {
       coreState = getCoreState(step[0] / maxHp);
-      if (ticks < 0) {
-        ticks = getCoreTime(coreState);
-        coreNum += 1;
-      }
+      ticks = getCoreTime(coreState) - step[1];
+      coreNum += 1;
+      return [<label>Core {coreNum}</label>, comp];
+    } else if (i === 0) {
+      ticks -= step[1];
       return [<label>Core {coreNum}</label>, comp];
     } else {
+      ticks -= step[1];
       return [comp];
     }
   });
