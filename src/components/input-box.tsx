@@ -5,6 +5,7 @@ import styles from "./input-box.module.css";
 type InputBoxProps = {
   label: string;
   name: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   width?: number;
   height?: number;
   defaultValue?: number;
@@ -13,6 +14,7 @@ type InputBoxProps = {
 export function InputBox({
   label,
   name,
+  onChange,
   width = 30,
   height = 30,
   defaultValue,
@@ -26,6 +28,7 @@ export function InputBox({
       <input
         id={inputId}
         name={name}
+        onChange={onChange}
         className={styles.input}
         style={{ width, height }}
         defaultValue={defaultValue}

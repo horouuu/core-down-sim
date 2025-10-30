@@ -1,10 +1,28 @@
 import "./App.css";
 import { InputBox } from "./components/input-box";
 import { WeaponSelection } from "./components/weapon-selection";
+import { useState } from "react";
 
-function handleInput() {}
+type Stats = {
+  strengthLevel: number;
+  strengthBonus: number;
+  raidLevel: number;
+  teamSize: 1;
+};
 
 function App() {
+  const [stats, setStats] = useState<Stats>({
+    strengthLevel: 99,
+    strengthBonus: 0,
+    raidLevel: 500,
+    teamSize: 1,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setStats({ ...stats, [name]: parseInt(value) });
+  };
+
   return (
     <>
       <h1 id="title">core down simulator</h1>
@@ -14,14 +32,26 @@ function App() {
             label="Strength level"
             name="strengthLevel"
             defaultValue={99}
+            onChange={handleChange}
           />
           <InputBox
             label="Strength bonus"
             name="strengthBonus"
             defaultValue={0}
+            onChange={handleChange}
           />
-          <InputBox label="Raid level" name="raidLevel" defaultValue={500} />
-          <InputBox label="Team size" name="teamSize" defaultValue={1} />
+          <InputBox
+            label="Raid level"
+            name="raidLevel"
+            defaultValue={500}
+            onChange={handleChange}
+          />
+          <InputBox
+            label="Team size"
+            name="teamSize"
+            defaultValue={1}
+            onChange={handleChange}
+          />
         </div>
         <WeaponSelection
           weapons={[
@@ -41,6 +71,7 @@ function App() {
             "voidwaker",
           ]}
           onClick={({ weapon, spec }) => console.log(weapon, spec)}
+          stats={stats}
         />
       </div>
     </>
