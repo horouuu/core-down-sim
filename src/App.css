@@ -59,4 +59,7 @@
   #content {
     align-items: start;
   }
+  #container {
+    gap: 25px;
+  }
 }
