@@ -25,8 +25,6 @@ export function NumberInputBox(props: NumberProps) {
   const {
     label,
     name,
-    width = 35,
-    height = 25,
     onChange,
     defaultValue = 0,
     min,
@@ -62,7 +60,7 @@ export function NumberInputBox(props: NumberProps) {
         value={value ?? undefined}
         onChange={handleChange}
         className={styles.input}
-        style={{ width, height }}
+
         defaultValue={defaultValue}
       />
     </Fragment>

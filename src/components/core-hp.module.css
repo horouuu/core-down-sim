@@ -12,6 +12,10 @@
   outline: none;
   border: none;
   box-shadow: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .bar:hover {
@@ -66,9 +70,12 @@
 }
 
 .dmgBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-width: 30px;
   width: auto;
-  height: auto;
+  height: 24px;
   background: rgba(255, 0, 0, 0.25);
   border-radius: 2px;
   text-shadow: 1px 1px 0 black;
@@ -83,7 +90,9 @@
 }
 
 .subbedBox {
-  min-width: 62px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 24px;
   background: rgba(255, 0, 0, 0.25);
   border-radius: 2px;
@@ -95,4 +104,39 @@
   position: absolute;
   left: 0;
   margin-left: 5px;
+}
+
+@media (max-width: 400px) {
+  .fill,
+  .bar,
+  .fillSubbed {
+    width: 135px;
+    font-size: 12px;
+    height: 12px;
+  }
+
+  .dmgBox,
+  .subbedBox {
+    font-size: 12px;
+    height: 12px;
+  }
+
+  .subbedBox {
+    width: 50px;
+  }
+
+  .numberLabel {
+    font-size: 8px;
+  }
+
+  .barContainer,
+  .coreContainer {
+    row-gap: 0px;
+    gap: 5px;
+  }
+
+  .img {
+    width: 12px;
+    height: 12px;
+  }
 }

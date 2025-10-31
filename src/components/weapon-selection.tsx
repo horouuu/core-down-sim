@@ -66,7 +66,7 @@ export function WeaponSelection({
                 })
               }
             >
-              <img src={`${ICONS_URL}/${weapon[1].id}.png`} />
+              <img className={styles.img} src={`${ICONS_URL}/${weapon[1].id}.png`} />
             </button>
             {dmg}
           </div>,

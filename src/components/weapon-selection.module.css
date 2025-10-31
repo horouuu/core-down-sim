@@ -43,3 +43,14 @@
   font-weight: 400;
   color: rgba(255, 0, 0, 0.75);
 }
+
+@media (max-width: 400px) {
+    .specWepButton, .normalWepButton, .img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .buttonContainer{
+        font-size: 11px;
+    }
+}

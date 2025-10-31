@@ -174,6 +174,7 @@ function App() {
               setHpState([]);
               setSubQueue([]);
             }}
+            style={{ alignSelf: "center" }}
           >
             Clear!
           </button>
