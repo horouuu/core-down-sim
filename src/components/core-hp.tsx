@@ -10,6 +10,7 @@ type HpBarProps = {
   onRemoveStep: (i: number) => void;
   onSubstituteStep: (i: number) => void;
   idx: number;
+  coreIdx: number;
 };
 
 function getCoreTime(coreState: number) {
@@ -43,7 +44,7 @@ const processStates = (
   onSubstituteStep: (i: number) => void
 ) => {
   const reduced = hpState.reduce<[number, number][]>((acc, stateData) => {
-    const last = acc.at(-1) ?? [maxHp, 1, 0, 1];
+    const last = acc.at(-1) ?? [maxHp, 1];
     const currHp = last[0] - stateData.dmg * 5;
     acc.push([currHp, stateData.weaponTicks]);
     return acc;
@@ -51,34 +52,39 @@ const processStates = (
 
   let coreState = 1;
   let coreNum = 1;
+  let currCoreIdx = 0;
   let ticks = getCoreTime(coreState);
   const final = reduced.flatMap((step, i) => {
-    const comp = (
-      <HpBar
-        key={i}
-        idx={i}
-        current={step[0]}
-        onRemoveStep={onRemoveStep}
-        onSubstituteStep={onSubstituteStep}
-        max={maxHp}
-        stateData={{
-          dmg: hpState[i].dmg,
-          weaponId: hpState[i].weapon.id,
-        }}
-      />
-    );
+    const props = {
+      key: i,
+      idx: i,
+      coreIdx: currCoreIdx,
+      current: step[0],
+      onRemoveStep: onRemoveStep,
+      onSubstituteStep: onSubstituteStep,
+      max: maxHp,
+      stateData: {
+        dmg: hpState[i].dmg,
+        weaponId: hpState[i].weapon.id,
+      },
+    };
 
     if (ticks <= 0) {
       coreState = getCoreState(step[0] / maxHp);
       ticks = getCoreTime(coreState) - step[1];
       coreNum += 1;
-      return [<label>Core {coreNum}</label>, comp];
+      props.coreIdx = 0;
+      currCoreIdx = 0;
+      currCoreIdx = 1;
+      return [<label>Core {coreNum}</label>, <HpBar {...props} />];
     } else if (i === 0) {
       ticks -= step[1];
-      return [<label>Core {coreNum}</label>, comp];
+      currCoreIdx += 1;
+      return [<label>Core {coreNum}</label>, <HpBar {...props} />];
     } else {
       ticks -= step[1];
-      return [comp];
+      currCoreIdx += 1;
+      return [<HpBar {...props} />];
     }
   });
 
@@ -92,6 +98,7 @@ function HpBar({
   onRemoveStep,
   onSubstituteStep,
   idx,
+  coreIdx,
 }: HpBarProps) {
   const { weaponId, dmg } = stateData;
   const subbed = dmg < 0;
@@ -143,6 +150,7 @@ function HpBar({
         <label className={styles.label}>
           {subbed ? "?" : `${current}/${max} [${pText}]`}
         </label>
+        <label className={styles.numberLabel}>{coreIdx + 1}</label>
       </button>
     </div>
   );

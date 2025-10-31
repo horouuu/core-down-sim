@@ -90,3 +90,9 @@
   text-shadow: 1px 1px 0 black;
   color: rgba(255, 192, 192, 0.75);
 }
+
+.numberLabel {
+  position: absolute;
+  left: 0;
+  margin-left: 5px;
+}
