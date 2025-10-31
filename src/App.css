@@ -12,12 +12,6 @@
   gap: 20px;
 }
 
-@media (max-width: 400px) {
-  #content {
-    align-items: start;
-  }
-}
-
 #inputs {
   display: grid;
   grid-template-columns: auto max-content;
@@ -59,4 +53,10 @@
 #button:focus,
 #button:focus-visible {
   outline: none;
+}
+
+@media (max-width: 520px) {
+  #content {
+    align-items: start;
+  }
 }
