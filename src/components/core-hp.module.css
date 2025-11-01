@@ -109,7 +109,6 @@
 }
 
 @media (max-width: 520px) {
-  .fill,
   .bar,
   .fillSubbed {
     width: 135px;
@@ -118,7 +117,8 @@
   }
 
   .dmgBox,
-  .subbedBox {
+  .subbedBox,
+  .fill {
     font-size: 12px;
     height: 24px;
   }
