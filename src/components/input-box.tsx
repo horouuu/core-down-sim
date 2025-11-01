@@ -22,14 +22,7 @@ type CheckboxProps = BaseProps & {
 };
 
 export function NumberInputBox(props: NumberProps) {
-  const {
-    label,
-    name,
-    onChange,
-    defaultValue = 0,
-    min,
-    max,
-  } = props;
+  const { label, name, onChange, defaultValue = 0, min, max } = props;
   const [value, setValue] = useState<number | null>(defaultValue);
   const inputId = useId();
 
@@ -59,8 +52,11 @@ export function NumberInputBox(props: NumberProps) {
         name={name}
         value={value ?? undefined}
         onChange={handleChange}
-        className={styles.input}
-
+        className={
+          value && value.toString().length > 2
+            ? `${styles.input} ${styles.inputLarge}`
+            : styles.input
+        }
         defaultValue={defaultValue}
       />
     </Fragment>

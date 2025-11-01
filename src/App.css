@@ -62,4 +62,10 @@
   #container {
     gap: 25px;
   }
+  #title::after {
+    font-size: 11px;
+  }
+  #title {
+    font-size: 2em;
+  }
 }
