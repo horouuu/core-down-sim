@@ -39,6 +39,7 @@ export function NumberInputBox(props: NumberProps) {
     }
 
     setValue(validValue);
+    e.target.value = validValue ? `${validValue}` : "";
     onChange(e.target.name, validValue ?? min ?? 0);
   };
 
@@ -50,7 +51,6 @@ export function NumberInputBox(props: NumberProps) {
       <input
         id={inputId}
         name={name}
-        value={value ?? undefined}
         onChange={handleChange}
         className={
           value && value.toString().length > 2
@@ -72,11 +72,9 @@ export function Checkbox(props: CheckboxProps) {
     onChange,
     defaultChecked = false,
   } = props;
-  const [checked, setChecked] = useState<boolean>(defaultChecked);
   const inputId = useId();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(e.target.checked);
     onChange(e.target.name, e.target.checked);
   };
 
@@ -89,7 +87,6 @@ export function Checkbox(props: CheckboxProps) {
         id={inputId}
         type="checkbox"
         name={name}
-        checked={checked}
         onChange={handleChange}
         className={styles.input}
         style={{ width, height, justifySelf: "center" }}
