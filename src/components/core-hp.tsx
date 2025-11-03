@@ -15,7 +15,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { HpState } from "../App";
 import styles from "./core-hp.module.css";
-import { useEffect, useState } from "react";
 
 const ICONS_URL = `https://cdn.jsdelivr.net/gh/0xNeffarion/osrsreboxed-db@37322fed3abb2d58236c59dfc6babb37a27a50ea/docs/items-icons/`;
 
@@ -24,7 +23,7 @@ type HpBarProps = {
   max: number;
   stateData: { weaponId: number; dmg: number };
   onRemoveStep: (i: number) => void;
-  onSubstituteStep: (i: number) => void;
+  onSubstituteStep: (id: number, idx: number) => void;
   idx: number;
   id: number;
   coreIdx: number;
@@ -58,7 +57,7 @@ const processStates = (
   hpState: (HpState & { id: number })[],
   maxHp: number,
   onRemoveStep: (i: number) => void,
-  onSubstituteStep: (i: number) => void
+  onSubstituteStep: (i: number, idx: number) => void
 ) => {
   const reduced = hpState.reduce<[number, number][]>((acc, stateData) => {
     const last = acc.at(-1) ?? [maxHp, 1];
@@ -134,12 +133,12 @@ function HpBar({
     transition,
   };
 
-  const handleClick = (e: React.MouseEvent, idx: number) => {
+  const handleClick = (e: React.MouseEvent, id: number, idx: number) => {
     if (e.target === e.currentTarget) return;
     if (e.shiftKey && !subbed) {
-      onSubstituteStep(idx);
+      onSubstituteStep(id, idx);
     } else {
-      onRemoveStep(idx);
+      onRemoveStep(id);
     }
   };
 
@@ -150,7 +149,7 @@ function HpBar({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClick(e, idx)}
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClick(e, id, idx)}
     >
       {subbed ? (
         <div className={styles.subbedBox}>?</div>
@@ -181,7 +180,7 @@ type CoreHpCalculatorProps = {
   hpState: HpState[];
   maxHp: number;
   onRemoveStep: (i: number) => void;
-  onSubstituteStep: (i: number) => void;
+  onSubstituteStep: (i: number, idx: number) => void;
   onReorder: (h: HpState[]) => void;
 };
 
@@ -198,30 +197,17 @@ export function CoreHpCalculator({
     })
   );
 
-  const [items, setItems] = useState(
-    hpState.map((item, i) => ({ ...item, id: i }))
-  );
-
-  useEffect(() => {
-    setItems(hpState.map((item, i) => ({ ...item, id: i })));
-  }, [hpState]);
-
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || !active) return;
     if (active.id !== over.id) {
-      setItems((prev) => {
-        const oldIndex = prev.findIndex((i) => i.id === active.id);
-        const newIndex = prev.findIndex((i) => i.id === over.id);
-        if (oldIndex === -1 || newIndex === -1) return prev;
-        const n = arrayMove(prev, oldIndex, newIndex);
-        onReorder(n);
-        return n;
-      });
+      const oldIndex = hpState.findIndex((i) => i.id === active.id);
+      const newIndex = hpState.findIndex((i) => i.id === over.id);
+      if (oldIndex === -1 || newIndex === -1) return;
+      const n = arrayMove(hpState, oldIndex, newIndex);
+      onReorder(n);
     }
   }
-
-  console.log(items);
 
   return (
     <div className={styles.coreContainer}>
@@ -230,8 +216,8 @@ export function CoreHpCalculator({
         sensors={sensors}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext strategy={verticalListSortingStrategy} items={items}>
-          {processStates(items, maxHp, onRemoveStep, onSubstituteStep)}
+        <SortableContext strategy={verticalListSortingStrategy} items={hpState}>
+          {processStates(hpState, maxHp, onRemoveStep, onSubstituteStep)}
         </SortableContext>
       </DndContext>
     </div>

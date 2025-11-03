@@ -20,6 +20,7 @@ export type HpState = {
   weaponTicks: number;
   dmg: number;
   spec: boolean;
+  id: number;
 };
 
 function App() {
@@ -33,7 +34,8 @@ function App() {
   });
 
   const [hpState, setHpState] = useState<HpState[]>([]);
-  const [subQueue, setSubQueue] = useState<number[]>([]);
+  const [subQueue, setSubQueue] = useState<[number, number][]>([]);
+  const [currentId, setCurrentId] = useState<number>(0);
 
   const handleStatsChange = (name: string, value: number | boolean) => {
     const newStats = { ...stats, [name]: value };
@@ -67,45 +69,50 @@ function App() {
     weaponTicks,
     dmg,
     spec,
-  }: {
-    weapon: Item;
-    weaponTicks: number;
-    dmg: number;
-    spec: boolean;
-  }) => {
-    const newStep = { weapon, weaponTicks, dmg: dmg * stats.teamSize, spec };
+  }: Omit<HpState, "id">) => {
+    const newStep = {
+      weapon,
+      weaponTicks,
+      dmg: dmg * stats.teamSize,
+      spec,
+    };
     if (subQueue.length > 0) {
-      const first = subQueue[0];
+      const first = subQueue[0][0];
+      setHpState((prev) =>
+        prev.map((step) =>
+          step.id === first ? { ...newStep, id: first } : step
+        )
+      );
+
       setSubQueue(subQueue.slice(1));
-      setHpState([
-        ...hpState.slice(0, first),
-        newStep,
-        ...hpState.slice(first + 1),
-      ]);
     } else {
-      setHpState([...hpState, newStep]);
+      setHpState([...hpState, { ...newStep, id: currentId }]);
+      setCurrentId((prev) => prev + 1);
     }
   };
 
-  const handleSubstituteStep = (idx: number) => {
-    if (idx < hpState.length) {
-      const obj = { ...hpState[idx], dmg: -1 };
-      const newHpState = [
-        ...hpState.slice(0, idx),
-        obj,
-        ...hpState.slice(idx + 1),
-      ];
-      setHpState(newHpState);
-      setSubQueue([...subQueue, idx].sort());
-    }
+  const handleSubstituteStep = (id: number, idx: number) => {
+    if (!hpState.find((step) => step.id === id)) return;
+    setHpState((prev) =>
+      prev.map((step) => (step.id === id ? { ...step, dmg: -5 } : step))
+    );
+
+    setSubQueue((prev) =>
+      [...prev, [id, idx] as [number, number]].sort((a, b) => a[1] - b[1])
+    );
   };
 
   const handleReorder = (newHpState: HpState[]) => {
     setHpState(newHpState);
+    setSubQueue(
+      newHpState.flatMap((step, i) => (step.dmg < 0 ? [[step.id, i]] : []))
+    );
   };
 
   const handleRemoveStep = (i: number) => {
+    const id = hpState[i].id;
     setHpState([...hpState.slice(0, i), ...hpState.slice(i + 1)]);
+    setSubQueue((prev) => prev.filter((i) => i[0] !== id));
   };
 
   return (
