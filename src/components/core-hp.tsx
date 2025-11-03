@@ -105,6 +105,7 @@ function HpBar({
   const pText = `${Math.floor(percentage * 100)}%`;
 
   const handleClick = (e: React.MouseEvent, idx: number) => {
+    if (e.target === e.currentTarget) return;
     if (e.shiftKey && !subbed) {
       onSubstituteStep(idx);
     } else {
