@@ -113,33 +113,20 @@ function HpBar({
   };
 
   return (
-    <div className={styles.barContainer}>
+    <div
+      className={styles.barContainer}
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClick(e, idx)}
+    >
       {subbed ? (
         <div className={styles.subbedBox}>?</div>
       ) : (
         <>
-          <img
-            className={styles.img}
-            src={`${ICONS_URL}/${weaponId}.png`}
-            onClick={(e: React.MouseEvent<HTMLImageElement>) =>
-              handleClick(e, idx)
-            }
-          />
-          <div
-            className={styles.dmgBox}
-            onClick={(e: React.MouseEvent<HTMLDivElement>) =>
-              handleClick(e, idx)
-            }
-          >
-            {dmg * 5}
-          </div>
+          <img className={styles.img} src={`${ICONS_URL}/${weaponId}.png`} />
+          <div className={styles.dmgBox}>{dmg * 5}</div>
         </>
       )}
       <button
         className={styles.bar}
-        onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-          handleClick(e, idx)
-        }
         style={{ ["--pct" as string]: percentage }}
       >
         <div
