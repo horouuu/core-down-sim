@@ -56,7 +56,6 @@ const processStates = (
   let ticks = getCoreTime(coreState);
   const final = reduced.flatMap((step, i) => {
     const props = {
-      key: i,
       idx: i,
       coreIdx: currCoreIdx,
       current: step[0],
@@ -76,15 +75,15 @@ const processStates = (
       props.coreIdx = 0;
       currCoreIdx = 0;
       currCoreIdx = 1;
-      return [<label>Core {coreNum}</label>, <HpBar {...props} />];
+      return [<label>Core {coreNum}</label>, <HpBar key={i} {...props} />];
     } else if (i === 0) {
       ticks -= step[1];
       currCoreIdx += 1;
-      return [<label>Core {coreNum}</label>, <HpBar {...props} />];
+      return [<label>Core {coreNum}</label>, <HpBar key={i} {...props} />];
     } else {
       ticks -= step[1];
       currCoreIdx += 1;
-      return [<HpBar {...props} />];
+      return [<HpBar key={i} {...props} />];
     }
   });
 
