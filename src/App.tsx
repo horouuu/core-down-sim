@@ -15,12 +15,12 @@ type Stats = {
   avernic: boolean;
 };
 
-export type HpStateStack = {
+export type HpState = {
   weapon: Item;
   weaponTicks: number;
   dmg: number;
   spec: boolean;
-}[];
+};
 
 function App() {
   const [stats, setStats] = useState<Stats>({
@@ -32,7 +32,7 @@ function App() {
     avernic: true,
   });
 
-  const [hpState, setHpState] = useState<HpStateStack>([]);
+  const [hpState, setHpState] = useState<HpState[]>([]);
   const [subQueue, setSubQueue] = useState<number[]>([]);
 
   const handleStatsChange = (name: string, value: number | boolean) => {
@@ -98,6 +98,10 @@ function App() {
       setHpState(newHpState);
       setSubQueue([...subQueue, idx].sort());
     }
+  };
+
+  const handleReorder = (newHpState: HpState[]) => {
+    setHpState(newHpState);
   };
 
   const handleRemoveStep = (i: number) => {
@@ -189,6 +193,7 @@ function App() {
           hpState={hpState}
           onRemoveStep={handleRemoveStep}
           onSubstituteStep={handleSubstituteStep}
+          onReorder={handleReorder}
         />
       </div>
     </>

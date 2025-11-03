@@ -1,5 +1,21 @@
-import type { HpStateStack } from "../App";
+import {
+  closestCenter,
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type { HpState } from "../App";
 import styles from "./core-hp.module.css";
+import { useEffect, useState } from "react";
 
 const ICONS_URL = `https://cdn.jsdelivr.net/gh/0xNeffarion/osrsreboxed-db@37322fed3abb2d58236c59dfc6babb37a27a50ea/docs/items-icons/`;
 
@@ -10,6 +26,7 @@ type HpBarProps = {
   onRemoveStep: (i: number) => void;
   onSubstituteStep: (i: number) => void;
   idx: number;
+  id: number;
   coreIdx: number;
 };
 
@@ -38,7 +55,7 @@ function getCoreState(hpPct: number) {
 }
 
 const processStates = (
-  hpState: HpStateStack,
+  hpState: (HpState & { id: number })[],
   maxHp: number,
   onRemoveStep: (i: number) => void,
   onSubstituteStep: (i: number) => void
@@ -55,7 +72,9 @@ const processStates = (
   let currCoreIdx = 0;
   let ticks = getCoreTime(coreState);
   const final = reduced.flatMap((step, i) => {
+    const id = hpState[i].id;
     const props = {
+      id,
       idx: i,
       coreIdx: currCoreIdx,
       current: step[0],
@@ -75,15 +94,15 @@ const processStates = (
       props.coreIdx = 0;
       currCoreIdx = 0;
       currCoreIdx = 1;
-      return [<label>Core {coreNum}</label>, <HpBar key={i} {...props} />];
+      return [<label>Core {coreNum}</label>, <HpBar key={id} {...props} />];
     } else if (i === 0) {
       ticks -= step[1];
       currCoreIdx += 1;
-      return [<label>Core {coreNum}</label>, <HpBar key={i} {...props} />];
+      return [<label>Core {coreNum}</label>, <HpBar key={id} {...props} />];
     } else {
       ticks -= step[1];
       currCoreIdx += 1;
-      return [<HpBar key={i} {...props} />];
+      return [<HpBar key={id} {...props} />];
     }
   });
 
@@ -96,6 +115,7 @@ function HpBar({
   stateData,
   onRemoveStep,
   onSubstituteStep,
+  id,
   idx,
   coreIdx,
 }: HpBarProps) {
@@ -103,6 +123,16 @@ function HpBar({
   const subbed = dmg < 0;
   const percentage = Math.max(0, Math.min(1, current / max || 0));
   const pText = `${Math.floor(percentage * 100)}%`;
+
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({
+      id,
+    });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
 
   const handleClick = (e: React.MouseEvent, idx: number) => {
     if (e.target === e.currentTarget) return;
@@ -116,6 +146,10 @@ function HpBar({
   return (
     <div
       className={styles.barContainer}
+      style={style}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
       onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClick(e, idx)}
     >
       {subbed ? (
@@ -144,10 +178,11 @@ function HpBar({
 }
 
 type CoreHpCalculatorProps = {
-  hpState: HpStateStack;
+  hpState: HpState[];
   maxHp: number;
   onRemoveStep: (i: number) => void;
   onSubstituteStep: (i: number) => void;
+  onReorder: (h: HpState[]) => void;
 };
 
 export function CoreHpCalculator({
@@ -155,10 +190,50 @@ export function CoreHpCalculator({
   maxHp,
   onRemoveStep,
   onSubstituteStep,
+  onReorder,
 }: CoreHpCalculatorProps) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    })
+  );
+
+  const [items, setItems] = useState(
+    hpState.map((item, i) => ({ ...item, id: i }))
+  );
+
+  useEffect(() => {
+    setItems(hpState.map((item, i) => ({ ...item, id: i })));
+  }, [hpState]);
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || !active) return;
+    if (active.id !== over.id) {
+      setItems((prev) => {
+        const oldIndex = prev.findIndex((i) => i.id === active.id);
+        const newIndex = prev.findIndex((i) => i.id === over.id);
+        if (oldIndex === -1 || newIndex === -1) return prev;
+        const n = arrayMove(prev, oldIndex, newIndex);
+        onReorder(n);
+        return n;
+      });
+    }
+  }
+
+  console.log(items);
+
   return (
     <div className={styles.coreContainer}>
-      {processStates(hpState, maxHp, onRemoveStep, onSubstituteStep)}
+      <DndContext
+        collisionDetection={closestCenter}
+        sensors={sensors}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext strategy={verticalListSortingStrategy} items={items}>
+          {processStates(items, maxHp, onRemoveStep, onSubstituteStep)}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }
