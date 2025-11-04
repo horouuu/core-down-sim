@@ -109,9 +109,8 @@ function App() {
     );
   };
 
-  const handleRemoveStep = (i: number) => {
-    const id = hpState[i].id;
-    setHpState([...hpState.slice(0, i), ...hpState.slice(i + 1)]);
+  const handleRemoveStep = (id: number) => {
+    setHpState((prev) => prev.filter((i) => i.id !== id));
     setSubQueue((prev) => prev.filter((i) => i[0] !== id));
   };
 

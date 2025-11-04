@@ -22,7 +22,7 @@ type HpBarProps = {
   current: number;
   max: number;
   stateData: { weaponId: number; dmg: number };
-  onRemoveStep: (i: number) => void;
+  onRemoveStep: (id: number) => void;
   onSubstituteStep: (id: number, idx: number) => void;
   idx: number;
   id: number;
@@ -179,7 +179,7 @@ function HpBar({
 type CoreHpCalculatorProps = {
   hpState: HpState[];
   maxHp: number;
-  onRemoveStep: (i: number) => void;
+  onRemoveStep: (id: number) => void;
   onSubstituteStep: (i: number, idx: number) => void;
   onReorder: (h: HpState[]) => void;
 };
