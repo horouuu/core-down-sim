@@ -30,6 +30,13 @@ Reordering will require the user to hold down a row until its text is selected.\
 
 
 ## Usage
+### Simming
+Using the sim is very simple:
+1. Enter your desired settings
+2. Click on any weapon (ones with a green background are the special attacks of that weapon)\
+  2.1. Click on any row to remove it if needed\
+  2.2. Change your stats if necessary
+3. Use the `Clear!` button to start over
 ### Settings
 <img width="310" height="313" alt="image" src="https://github.com/user-attachments/assets/5e641665-0c97-4c1e-bcf0-a23bbe756de1" />
 
