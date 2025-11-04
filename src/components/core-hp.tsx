@@ -18,17 +18,6 @@ import styles from "./core-hp.module.css";
 
 const ICONS_URL = `https://cdn.jsdelivr.net/gh/0xNeffarion/osrsreboxed-db@37322fed3abb2d58236c59dfc6babb37a27a50ea/docs/items-icons/`;
 
-type HpBarProps = {
-  current: number;
-  max: number;
-  stateData: { weaponId: number; dmg: number };
-  onRemoveStep: (id: number) => void;
-  onSubstituteStep: (id: number, idx: number) => void;
-  idx: number;
-  id: number;
-  coreIdx: number;
-};
-
 function getCoreTime(coreState: number) {
   if (coreState === 1) {
     return 21;
@@ -70,21 +59,24 @@ const processStates = (
   let coreNum = 1;
   let currCoreIdx = 0;
   let ticks = getCoreTime(coreState);
-  const final = reduced.flatMap((step, i) => {
-    const id = hpState[i].id;
+  const final = reduced.flatMap((step, idx) => {
+    const id = hpState[idx].id;
     const props = {
       id,
-      idx: i,
+      idx,
       coreIdx: currCoreIdx,
-      current: step[0],
-      onRemoveStep: onRemoveStep,
-      onSubstituteStep: onSubstituteStep,
-      max: maxHp,
+      currentHp: step[0],
+      onRemoveStep,
+      onSubstituteStep,
+      maxHp,
       stateData: {
-        dmg: hpState[i].dmg,
-        weaponId: hpState[i].weapon.id,
+        dmg: hpState[idx].dmg,
+        weaponId: hpState[idx].weapon.id,
       },
     };
+
+    const hpBar = <HpBar key={id} {...props} />;
+    const getCoreLabel = (c: number) => <label>Core {c}</label>;
 
     if (ticks <= 0) {
       coreState = getCoreState(step[0] / maxHp);
@@ -93,34 +85,41 @@ const processStates = (
       props.coreIdx = 0;
       currCoreIdx = 0;
       currCoreIdx = 1;
-      return [<label>Core {coreNum}</label>, <HpBar key={id} {...props} />];
-    } else if (i === 0) {
-      ticks -= step[1];
-      currCoreIdx += 1;
-      return [<label>Core {coreNum}</label>, <HpBar key={id} {...props} />];
+      return [getCoreLabel(coreNum), hpBar];
     } else {
       ticks -= step[1];
       currCoreIdx += 1;
-      return [<HpBar key={id} {...props} />];
+      return idx === 0 ? [getCoreLabel(1), hpBar] : [hpBar];
     }
   });
 
   return final;
 };
 
+type HpBarProps = {
+  id: number;
+  idx: number;
+  coreIdx: number;
+  currentHp: number;
+  maxHp: number;
+  stateData: { weaponId: number; dmg: number };
+  onRemoveStep: (id: number) => void;
+  onSubstituteStep: (id: number, idx: number) => void;
+};
+
 function HpBar({
-  current,
-  max,
-  stateData,
-  onRemoveStep,
-  onSubstituteStep,
   id,
   idx,
   coreIdx,
+  currentHp,
+  maxHp,
+  stateData,
+  onRemoveStep,
+  onSubstituteStep,
 }: HpBarProps) {
   const { weaponId, dmg } = stateData;
   const subbed = dmg < 0;
-  const percentage = Math.max(0, Math.min(1, current / max || 0));
+  const percentage = Math.max(0, Math.min(1, currentHp / maxHp || 0));
   const pText = `${Math.floor(percentage * 100)}%`;
 
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -168,7 +167,7 @@ function HpBar({
           style={{ ["--pct" as string]: percentage }}
         />
         <label className={styles.label}>
-          {subbed ? "?" : `${current}/${max} [${pText}]`}
+          {subbed ? "?" : `${currentHp}/${maxHp} [${pText}]`}
         </label>
         <label className={styles.numberLabel}>{coreIdx + 1}</label>
       </button>
