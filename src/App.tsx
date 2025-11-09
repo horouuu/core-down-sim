@@ -23,6 +23,13 @@ export type HpState = {
   id: number;
 };
 
+function getCoreMaxHp(raidLevel: number, teamSize: number) {
+  const rawHp =
+    4500 * (1 + (raidLevel / 20) * 0.02) * (1 + 0.9 * (teamSize - 1));
+
+  return Math.round(rawHp / 10) * 10;
+}
+
 function App() {
   const [stats, setStats] = useState<Stats>({
     strengthLevel: 99,
@@ -191,12 +198,7 @@ function App() {
           </button>
         </div>
         <CoreHpCalculator
-          maxHp={Math.max(
-            4500,
-            4500 *
-              (1 + Math.floor(stats.raidLevel / 20) * 0.02) *
-              (1 + 0.9 * (stats.teamSize - 1))
-          )}
+          maxHp={Math.max(4500, getCoreMaxHp(stats.raidLevel, stats.teamSize))}
           hpState={hpState}
           onRemoveStep={handleRemoveStep}
           onSubstituteStep={handleSubstituteStep}
