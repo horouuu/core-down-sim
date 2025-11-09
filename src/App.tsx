@@ -174,6 +174,7 @@ function App() {
               "keris partisan",
               "tentacle",
               "voidwaker",
+              "elder maul",
             ]}
             onClick={handleAddAttack}
             stats={stats}
