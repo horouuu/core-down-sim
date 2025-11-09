@@ -25,7 +25,7 @@ export type HpState = {
 
 function getCoreMaxHp(raidLevel: number, teamSize: number) {
   const rawHp =
-    4500 * (1 + (raidLevel / 20) * 0.02) * (1 + 0.9 * (teamSize - 1));
+    4500 * (1 + Math.floor(raidLevel / 20) * 0.02) * (1 + 0.9 * (teamSize - 1));
 
   return Math.round(rawHp / 10) * 10;
 }
