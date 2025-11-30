@@ -59,6 +59,7 @@ const processStates = (
   let coreNum = 1;
   let currCoreIdx = 0;
   let ticks = getCoreTime(coreState);
+  let prev: [number, number] | null = null;
   const final = reduced.flatMap((step, idx) => {
     const id = hpState[idx].id;
     const props = {
@@ -79,16 +80,19 @@ const processStates = (
     const getCoreLabel = (c: number) => <label>Core {c}</label>;
 
     if (ticks <= 0) {
-      coreState = getCoreState(step[0] / maxHp);
+      const lastHp = prev ? prev[0] : 0;
+      coreState = getCoreState(lastHp / maxHp);
       ticks = getCoreTime(coreState) - step[1];
       coreNum += 1;
       props.coreIdx = 0;
       currCoreIdx = 0;
       currCoreIdx = 1;
+      prev = step;
       return [getCoreLabel(coreNum), hpBar];
     } else {
       ticks -= step[1];
       currCoreIdx += 1;
+      prev = step;
       return idx === 0 ? [getCoreLabel(1), hpBar] : [hpBar];
     }
   });
