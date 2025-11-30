@@ -65,7 +65,7 @@ const processStates = (
     const props = {
       id,
       idx,
-      coreIdx: currCoreIdx,
+      coreIdx: ticks <= 0 ? 0 : currCoreIdx,
       currentHp: step[0],
       onRemoveStep,
       onSubstituteStep,
@@ -84,8 +84,6 @@ const processStates = (
       coreState = getCoreState(lastHp / maxHp);
       ticks = getCoreTime(coreState) - step[1];
       coreNum += 1;
-      props.coreIdx = 0;
-      currCoreIdx = 0;
       currCoreIdx = 1;
       prev = step;
       return [getCoreLabel(coreNum), hpBar];
