@@ -50,7 +50,8 @@ function App() {
     if (
       name === "strengthLevel" ||
       name === "strengthBonus" ||
-      name === "teamSize"
+      name === "teamSize" ||
+      name === "avernic"
     ) {
       setHpState(
         hpState.map((step) => ({
@@ -59,12 +60,14 @@ function App() {
             ? getSpecMaxHitToa(
                 step.weapon,
                 newStats.strengthLevel,
-                newStats.strengthBonus
+                newStats.strengthBonus,
+                newStats.avernic
               ) * newStats.teamSize
             : getMaxHitToa(
                 step.weapon,
                 newStats.strengthLevel,
-                newStats.strengthBonus
+                newStats.strengthBonus,
+                newStats.avernic
               ) * newStats.teamSize,
         }))
       );
