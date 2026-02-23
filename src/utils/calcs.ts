@@ -29,10 +29,7 @@ export function getSpecMaxHitToa(
   avernic: boolean = true,
 ) {
   const maxHit = getMaxHitToa(weapon, strLvl, equipmentStr, avernic, true);
-  if (weapon.id === 26219) {
-    // fang
-    return Math.floor(maxHit / 0.85);
-  } else if (weapon.id === 11804) {
+  if (weapon.id === 11804) {
     // bgs
     return Math.floor(maxHit * 1.21);
   } else if (weapon.id === 1215) {
