@@ -4,7 +4,8 @@ export function getMaxHitToa(
   weapon: Item,
   strLvl: number,
   equipmentStr: number,
-  avernic: boolean = true
+  avernic: boolean = true,
+  ignoreFlags: boolean = false,
 ) {
   const saltBonus = 11 + Math.floor(0.16 * strLvl);
   const twoHanded = weapon.equipment.slot === "2h";
@@ -14,10 +15,10 @@ export function getMaxHitToa(
     (effStr *
       (weapon.equipment.melee_strength + equipmentStr - defenderOffset + 64) +
       320) /
-      640
+      640,
   );
 
-  if (weapon.id === 26219) return Math.floor(maxHit * 0.85); // fang
+  if (weapon.id === 26219 && !ignoreFlags) return Math.floor(maxHit * 0.85); // fang
   return maxHit;
 }
 
@@ -25,9 +26,9 @@ export function getSpecMaxHitToa(
   weapon: Item,
   strLvl: number,
   equipmentStr: number,
-  avernic: boolean = true
+  avernic: boolean = true,
 ) {
-  const maxHit = getMaxHitToa(weapon, strLvl, equipmentStr, avernic);
+  const maxHit = getMaxHitToa(weapon, strLvl, equipmentStr, avernic, true);
   if (weapon.id === 26219) {
     // fang
     return Math.floor(maxHit / 0.85);
