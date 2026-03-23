@@ -42,8 +42,11 @@ export function getSpecMaxHitToa(
     const thirdHit = Math.floor(secondHit / 2);
     const fourthHit = thirdHit + 1;
     return firstHit + secondHit + thirdHit + fourthHit;
+    // bclaws
   } else if (weapon.id === 29577) {
     return Math.floor(maxHit * 1.75);
+  } else if (weapon.id === 11806) {
+    return Math.floor(maxHit * 1.1);
   }
 
   return maxHit;

@@ -172,6 +172,7 @@ function App() {
             weapons={[
               "bandos god",
               "*bandos god",
+              "saradomin godsword*",
               "dragon dagg",
               "*dragon dagg",
               "dragon claws",
