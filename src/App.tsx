@@ -186,6 +186,7 @@ function App() {
               "tentacle",
               "voidwaker",
               "elder maul",
+              "inquisitor mace"
             ]}
             onClick={handleAddAttack}
             stats={stats}
