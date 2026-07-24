@@ -28,7 +28,8 @@ export function getSpecMaxHitToa(
   const maxHit = getMaxHitToa(weapon, strLvl, equipmentStr, avernic, true);
   if (weapon.id === 11804) {
     // bgs
-    return Math.floor(maxHit * 1.21);
+    const gsDmg = Math.floor(maxHit * 1.1);
+    return Math.floor(gsDmg * 1.1);
   } else if (weapon.id === 1215) {
     // dds
     return Math.floor(maxHit * 1.15) * 2;
