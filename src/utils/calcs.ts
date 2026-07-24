@@ -10,13 +10,10 @@ export function getMaxHitToa(
   const saltBonus = 11 + Math.floor(0.16 * strLvl);
   const twoHanded = weapon.equipment.slot === "2h";
   const defenderOffset = twoHanded ? (avernic ? 8 : 6) : 0;
-  const effStr = Math.floor((strLvl + saltBonus) * 1.23) + 3 + 8;
-  const maxHit = Math.floor(
-    (effStr *
-      (weapon.equipment.melee_strength + equipmentStr - defenderOffset + 64) +
-      320) /
-      640,
-  );
+  const effStr = Math.floor((strLvl + saltBonus) * 1.23 + 3 + 8);
+  const totalEqStr =
+    weapon.equipment.melee_strength + equipmentStr - defenderOffset;
+  const maxHit = Math.floor((effStr * (totalEqStr + 64) + 320) / 640);
 
   if (weapon.id === 26219 && !ignoreFlags) return Math.floor(maxHit * 0.85); // fang
   return maxHit;
