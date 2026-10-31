@@ -1,31 +1,41 @@
 import type { Item } from "./items";
 
-export function getMaxHitToa(
-  weapon: Item,
-  strLvl: number,
-  equipmentStr: number,
-  avernic: boolean = true,
-  ignoreFlags: boolean = false,
-) {
+type MaxHitInputs = {
+  weapon: Item;
+  strLvl: number;
+  equipmentStr: number;
+  avernic: boolean;
+  ignoreFlags?: boolean;
+  zeal: boolean;
+};
+
+export function getMaxHitToa(inps: MaxHitInputs) {
+  const {
+    weapon,
+    strLvl,
+    equipmentStr,
+    avernic,
+    ignoreFlags = false,
+    zeal,
+  } = inps;
+
+  const prayBonus = zeal ? 1.28 : 1.23;
+
   const saltBonus = 11 + Math.floor(0.16 * strLvl);
   const twoHanded = weapon.equipment.slot === "2h";
   const defenderOffset = twoHanded ? (avernic ? 8 : 6) : 0;
-  const effStr = Math.floor((strLvl + saltBonus) * 1.23 + 3 + 8);
+  const effStr = Math.floor((strLvl + saltBonus) * prayBonus + 3 + 8);
   const totalEqStr =
     weapon.equipment.melee_strength + equipmentStr - defenderOffset;
   const maxHit = Math.floor((effStr * (totalEqStr + 64) + 320) / 640);
 
-  if (weapon.id === 26219 && !ignoreFlags) return Math.floor(maxHit * 0.85); // fang
+  if (weapon.id === 26219 && !ignoreFlags) return maxHit - Math.floor(maxHit * 0.15); // fang
   return maxHit;
 }
 
-export function getSpecMaxHitToa(
-  weapon: Item,
-  strLvl: number,
-  equipmentStr: number,
-  avernic: boolean = true,
-) {
-  const maxHit = getMaxHitToa(weapon, strLvl, equipmentStr, avernic, true);
+export function getSpecMaxHitToa(inps: Omit<MaxHitInputs, "ignoreFlags">) {
+  const { weapon } = inps;
+  const maxHit = getMaxHitToa(inps);
   if (weapon.id === 11804) {
     // bgs
     const gsDmg = Math.floor(maxHit * 1.1);
@@ -45,6 +55,8 @@ export function getSpecMaxHitToa(
     return Math.floor(maxHit * 1.75);
   } else if (weapon.id === 11806) {
     return Math.floor(maxHit * 1.1);
+  } else if (weapon.id === 26219) {
+    return Math.floor(getMaxHitToa({ ...inps, ignoreFlags: true }));
   }
 
   return maxHit;

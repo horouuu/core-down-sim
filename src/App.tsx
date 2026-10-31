@@ -13,6 +13,7 @@ type Stats = {
   teamSize: 1;
   salted: boolean;
   avernic: boolean;
+  zeal: boolean;
 };
 
 export type HpState = {
@@ -38,6 +39,7 @@ function App() {
     teamSize: 1,
     salted: true,
     avernic: true,
+    zeal: false,
   });
 
   const [hpState, setHpState] = useState<HpState[]>([]);
@@ -47,29 +49,34 @@ function App() {
   const handleStatsChange = (name: string, value: number | boolean) => {
     const newStats = { ...stats, [name]: value };
     setStats(newStats);
-    if (
-      name === "strengthLevel" ||
-      name === "strengthBonus" ||
-      name === "teamSize" ||
-      name === "avernic"
-    ) {
+
+    const whitelisted: readonly string[] = [
+      "strengthLevel",
+      "strengthBonus",
+      "teamSize",
+      "avernic",
+      "zeal",
+    ];
+    if (whitelisted.includes(name)) {
       setHpState(
         hpState.map((step) => ({
           ...step,
           dmg: step.spec
-            ? getSpecMaxHitToa(
-                step.weapon,
-                newStats.strengthLevel,
-                newStats.strengthBonus,
-                newStats.avernic
-              ) * newStats.teamSize
-            : getMaxHitToa(
-                step.weapon,
-                newStats.strengthLevel,
-                newStats.strengthBonus,
-                newStats.avernic
-              ) * newStats.teamSize,
-        }))
+            ? getSpecMaxHitToa({
+                weapon: step.weapon,
+                strLvl: newStats.strengthLevel,
+                equipmentStr: newStats.strengthBonus,
+                avernic: newStats.avernic,
+                zeal: newStats.zeal,
+              }) * newStats.teamSize
+            : getMaxHitToa({
+                weapon: step.weapon,
+                strLvl: newStats.strengthLevel,
+                equipmentStr: newStats.strengthBonus,
+                avernic: newStats.avernic,
+                zeal: newStats.zeal,
+              }) * newStats.teamSize,
+        })),
       );
     }
   };
@@ -90,8 +97,8 @@ function App() {
       const first = subQueue[0][0];
       setHpState((prev) =>
         prev.map((step) =>
-          step.id === first ? { ...newStep, id: first } : step
-        )
+          step.id === first ? { ...newStep, id: first } : step,
+        ),
       );
 
       setSubQueue(subQueue.slice(1));
@@ -104,18 +111,18 @@ function App() {
   const handleSubstituteStep = (id: number, idx: number) => {
     if (!hpState.find((step) => step.id === id)) return;
     setHpState((prev) =>
-      prev.map((step) => (step.id === id ? { ...step, dmg: -5 } : step))
+      prev.map((step) => (step.id === id ? { ...step, dmg: -5 } : step)),
     );
 
     setSubQueue((prev) =>
-      [...prev, [id, idx] as [number, number]].sort((a, b) => a[1] - b[1])
+      [...prev, [id, idx] as [number, number]].sort((a, b) => a[1] - b[1]),
     );
   };
 
   const handleReorder = (newHpState: HpState[]) => {
     setHpState(newHpState);
     setSubQueue(
-      newHpState.flatMap((step, i) => (step.dmg < 0 ? [[step.id, i]] : []))
+      newHpState.flatMap((step, i) => (step.dmg < 0 ? [[step.id, i]] : [])),
     );
   };
 
@@ -167,6 +174,12 @@ function App() {
               defaultChecked={true}
               onChange={handleStatsChange}
             />
+            <Checkbox
+              label="Zeal"
+              name="zeal"
+              defaultChecked={false}
+              onChange={handleStatsChange}
+            />
           </div>
           <WeaponSelection
             weapons={[
@@ -186,7 +199,7 @@ function App() {
               "tentacle",
               "voidwaker",
               "elder maul",
-              "inquisitor's mace"
+              "inquisitor's mace",
             ]}
             onClick={handleAddAttack}
             stats={stats}

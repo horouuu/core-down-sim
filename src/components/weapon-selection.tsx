@@ -15,7 +15,12 @@ type WeaponSelectionProps = {
     dmg: number;
     spec: boolean;
   }) => void;
-  stats: { strengthLevel: number; strengthBonus: number; avernic: boolean };
+  stats: {
+    strengthLevel: number;
+    strengthBonus: number;
+    avernic: boolean;
+    zeal: boolean;
+  };
 };
 
 const ICONS_URL = `https://cdn.jsdelivr.net/gh/0xNeffarion/osrsreboxed-db@37322fed3abb2d58236c59dfc6babb37a27a50ea/docs/items-icons/`;
@@ -32,7 +37,7 @@ export function WeaponSelection({
         const wName = w.replace("*", "");
         const spec = w.includes("*");
         const weapon = weaponEntries.find((e) =>
-          e[1].name.toLowerCase().includes(wName)
+          e[1].name.toLowerCase().includes(wName),
         );
         if (!weapon) return [];
 
@@ -40,18 +45,20 @@ export function WeaponSelection({
         if (!wepData) return [];
 
         const dmg = spec
-          ? getSpecMaxHitToa(
-              weapon[1],
-              stats.strengthLevel,
-              stats.strengthBonus,
-              stats.avernic
-            )
-          : getMaxHitToa(
-              weapon[1],
-              stats.strengthLevel,
-              stats.strengthBonus,
-              stats.avernic
-            );
+          ? getSpecMaxHitToa({
+              weapon: weapon[1],
+              strLvl: stats.strengthLevel,
+              equipmentStr: stats.strengthBonus,
+              avernic: stats.avernic,
+              zeal: stats.zeal,
+            })
+          : getMaxHitToa({
+              weapon: weapon[1],
+              strLvl: stats.strengthLevel,
+              equipmentStr: stats.strengthBonus,
+              avernic: stats.avernic,
+              zeal: stats.zeal,
+            });
 
         return [
           <div className={styles.buttonContainer} key={i}>
@@ -66,7 +73,10 @@ export function WeaponSelection({
                 })
               }
             >
-              <img className={styles.img} src={`${ICONS_URL}/${weapon[1].id}.png`} />
+              <img
+                className={styles.img}
+                src={`${ICONS_URL}/${weapon[1].id}.png`}
+              />
             </button>
             {dmg}
           </div>,
